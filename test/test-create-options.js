@@ -1,10 +1,12 @@
-'use strict';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const path = require('path');
+import tap from 'tap';
 
-const { test } = require('tap');
+import { createOptions } from '../lib/create-options.js';
 
-const createOptions = require('../lib/create-options');
+const { test } = tap;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 test('create-options:', (t) => {
   t.plan(4);
@@ -36,12 +38,12 @@ test('create-options:', (t) => {
   env['TMP'] = 'npm_config_tmp';
   env['TMPDIR'] = 'npm_config_tmp';
   // Set dynamically to support Windows.
-  env['npm_config_nodedir'] = path.resolve(process.cwd(), nodePath);
+  env['npm_config_nodedir'] = resolve(process.cwd(), nodePath);
 
-  t.equals(typeof options, 'object', 'We should get back an object');
+  t.equal(typeof options, 'object', 'We should get back an object');
   t.notOk(options.uid, 'There should not be a uid in the options');
   t.notOk(options.gid, 'There should not be a gid in the options');
-  t.deepequal(
+  t.same(
     options.env,
     env,
     'The created env should be a clone of' +
@@ -63,13 +65,13 @@ test('create-options: with uid / gid', (t) => {
 
   const options = createOptions(cwd, context);
 
-  t.equals(typeof options, 'object', 'We should get back an object');
+  t.equal(typeof options, 'object', 'We should get back an object');
   if (process.platform === 'win32') {
-    t.equals(options.uid, undefined, 'The uid should not be set on Windows');
-    t.equals(options.gid, undefined, 'The gid should not be set on Windows');
+    t.equal(options.uid, undefined, 'The uid should not be set on Windows');
+    t.equal(options.gid, undefined, 'The gid should not be set on Windows');
   } else {
-    t.equals(options.uid, 1337, 'The uid should be set to the expected value');
-    t.equals(options.gid, 1337, 'The gid should be set to the expected value');
+    t.equal(options.uid, 1337, 'The uid should be set to the expected value');
+    t.equal(options.gid, 1337, 'The gid should be set to the expected value');
   }
   t.end();
 });

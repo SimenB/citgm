@@ -1,10 +1,15 @@
-'use strict';
 // FIXME this is not a real unit test
 // FIXME it does not stub npm
 
-const { test } = require('tap');
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
-const grabModuleData = require('../lib/grab-module-data');
+import tap from 'tap';
+
+import { grabModuleData } from '../lib/grab-module-data.js';
+
+const { test } = tap;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 test('grab-module-data: lodash', async (t) => {
   t.plan(5);
@@ -23,7 +28,7 @@ test('grab-module-data: lodash', async (t) => {
 
   await grabModuleData(context);
   t.ok(context.meta, 'There should be a context.meta');
-  t.equals(
+  t.equal(
     context.meta.name,
     'lodash',
     'The name of the results should be lodash'
@@ -76,7 +81,7 @@ test('grab-module-data: hosted', async (t) => {
   };
 
   await grabModuleData(context);
-  t.deepequals(
+  t.same(
     context.meta,
     expected,
     'The returned meta object should' +
@@ -121,12 +126,12 @@ test('grab-module-data: semver range', async (t) => {
 
   await grabModuleData(context);
   t.ok(context.meta, 'There should be a context.meta');
-  t.equals(
+  t.equal(
     context.meta.name,
     'omg-i-pass',
     'The name of the results should be omg-i-pass'
   );
-  t.equals(
+  t.equal(
     context.meta.version,
     '2.0.1',
     'The version should be the latest satisfying the semver range'

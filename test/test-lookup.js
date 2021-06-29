@@ -1,12 +1,11 @@
-'use strict';
+import { EventEmitter } from 'events';
+import { readFileSync } from 'fs';
 
-const { test } = require('tap');
-const rewire = require('rewire');
+import tap from 'tap';
 
-const lookup = rewire('../lib/lookup');
+import { getLookupTable, makeUrl, lookup } from '../lib/lookup.js';
 
-const makeUrl = lookup.__get__('makeUrl');
-const getLookupTable = lookup.get;
+const { test } = tap;
 
 test('lookup: makeUrl', (t) => {
   t.plan(5);
@@ -78,7 +77,7 @@ test('lookup[getLookupTable]: custom table', (t) => {
   const table = getLookupTable({
     lookup: 'test/fixtures/custom-lookup.json'
   });
-  t.deepEquals(
+  t.same(
     table,
     {
       'omg-i-pass': {
@@ -143,7 +142,7 @@ test('lookup: module not in table with gitHead', (t) => {
   };
 
   lookup(context);
-  t.equals(
+  t.equal(
     context.module.raw,
     'https://github.com/nodejs/omg-i-pass/archive/abc123.tar.gz',
     'raw should use commit SHA if package has gitHead'
@@ -169,7 +168,7 @@ test('lookup: module in table', (t) => {
   };
 
   lookup(context);
-  t.equals(
+  t.equal(
     context.module.raw,
     'https://github.com/lodash/lodash/archive/HEAD.tar.gz',
     'raw should be truthy if the module was in the list'
@@ -196,7 +195,7 @@ test('lookup: module in table with gitHead', (t) => {
   };
 
   lookup(context);
-  t.equals(
+  t.equal(
     context.module.raw,
     'https://github.com/lodash/lodash/archive/abc123.tar.gz',
     'raw should use commit SHA if package has gitHead'
@@ -254,12 +253,12 @@ test('lookup: module in table with useGitClone', (t) => {
   };
 
   lookup(context);
-  t.equals(
+  t.equal(
     context.module.raw,
     'https://github.com/lodash/lodash.git',
     'raw should be a git URL if useGitClone is true'
   );
-  t.equals(context.module.ref, 'v1.2.3');
+  t.equal(context.module.ref, 'v1.2.3');
   t.end();
 });
 
@@ -274,7 +273,7 @@ test('lookup: no table', (t) => {
   try {
     lookup(context);
   } catch (err) {
-    t.equals(err && err.message, 'Lookup table could not be loaded');
+    t.equal(err && err.message, 'Lookup table could not be loaded');
     t.end();
   }
 });
@@ -299,7 +298,7 @@ test('lookup: replace with no repo', (t) => {
   try {
     lookup(context);
   } catch (err) {
-    t.equals(err && err.message, 'no-repository-field in package.json');
+    t.equal(err && err.message, 'no-repository-field in package.json');
     t.end();
   }
 });
@@ -324,7 +323,7 @@ test('lookup: not found in lookup.json with --sha', (t) => {
   };
 
   lookup(context);
-  t.equals(
+  t.equal(
     context.module.raw,
     'https://github.com/test-org/test-repo/archive/customsha.tar.gz'
   );
@@ -351,13 +350,15 @@ test('lookup: --fail-flaky', (t) => {
   };
 
   lookup(context);
-  t.false(context.module.flaky, 'flaky should be disabled');
+  t.notOk(context.module.flaky, 'flaky should be disabled');
   t.end();
 });
 
 test('lookup: ensure lookup works', (t) => {
   t.plan(2);
-  const lookup = require('../lib/lookup.json');
+  const lookup = JSON.parse(
+    readFileSync(new URL('../lib/lookup.json', import.meta.url))
+  );
   t.ok(lookup, 'the lookup table should exist');
 
   const lookupKeys = Object.keys(lookup);
@@ -412,7 +413,6 @@ test('lookup: logging', (t) => {
       msg: ['--extra-param']
     }
   ];
-  const EventEmitter = require('events').EventEmitter;
   const context = new EventEmitter();
   const log = [];
   context.meta = {

@@ -1,32 +1,29 @@
-'use strict';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
-const os = require('os');
-const path = require('path');
-const { test } = require('tap');
+import tap from 'tap';
 
-const packageManager = require('../lib/package-manager');
-const timeout = require('../lib/timeout');
+import { getPackageManagers } from '../lib/package-manager/index.js';
+import { timeout } from '../lib/timeout.js';
 
-const makeContext = require('./helpers/make-context');
-const sandbox = path.join(os.tmpdir(), `citgm-${Date.now()}`);
+import { npmContext } from './helpers/make-context.js';
+
+const { test } = tap;
+
+const sandbox = join(tmpdir(), `citgm-${Date.now()}`);
 
 let packageManagers;
 
 test('timeout: setup', async () => {
-  packageManagers = await packageManager.getPackageManagers();
+  packageManagers = await getPackageManagers();
 });
 
 test('timeout:', (t) => {
   t.plan(6);
-  const context = makeContext.npmContext(
-    'omg-i-pass',
-    packageManagers,
-    sandbox,
-    {
-      npmLevel: 'silly',
-      timeout: 100
-    }
-  );
+  const context = npmContext('omg-i-pass', packageManagers, sandbox, {
+    npmLevel: 'silly',
+    timeout: 100
+  });
   const proc = {
     kill() {
       this.killed++;
@@ -42,28 +39,23 @@ test('timeout:', (t) => {
   const finish = timeout('npm', context, proc, next, 'Tap');
   setTimeout(() => {
     t.notOk(context.module.flaky, 'Time out should not mark module flaky');
-    t.equals(proc.killed, 1);
-    t.equals(ret, null);
+    t.equal(proc.killed, 1);
+    t.equal(ret, null);
     t.ok(err instanceof Error, 'err should be an Error');
     // Finish should be idempotent
     const r = finish(1, 2);
-    t.equals(r, undefined);
-    t.equals(proc.killed, 1);
+    t.equal(r, undefined);
+    t.equal(proc.killed, 1);
     t.end();
   }, 200);
 });
 
 test('timeout:', (t) => {
   t.plan(9);
-  const context = makeContext.npmContext(
-    'omg-i-pass',
-    packageManagers,
-    sandbox,
-    {
-      npmLevel: 'silly',
-      timeout: 100
-    }
-  );
+  const context = npmContext('omg-i-pass', packageManagers, sandbox, {
+    npmLevel: 'silly',
+    timeout: 100
+  });
   const proc = {
     kill() {
       this.killed++;
@@ -82,17 +74,17 @@ test('timeout:', (t) => {
   };
   const finish = timeout('npm', context, proc, next, 'Tap');
   const r = finish(sentinel2, sentinel3);
-  t.equals(r, sentinel1);
-  t.equals(proc.killed, 0);
-  t.equals(err, sentinel2);
-  t.equals(ret, sentinel3);
+  t.equal(r, sentinel1);
+  t.equal(proc.killed, 0);
+  t.equal(err, sentinel2);
+  t.equal(ret, sentinel3);
   setTimeout(() => {
     const r = finish(1, 2);
     t.notOk(context.module.flaky, 'Module is not Flaky finish called');
-    t.equals(r, undefined);
-    t.equals(proc.killed, 0);
-    t.equals(err, sentinel2);
-    t.equals(ret, sentinel3);
+    t.equal(r, undefined);
+    t.equal(proc.killed, 0);
+    t.equal(err, sentinel2);
+    t.equal(ret, sentinel3);
     t.end();
   }, 200);
 });

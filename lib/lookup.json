@@ -2,7 +2,7 @@
   "@hapi/hapi": {
     "prefix": "v",
     "maintainers": ["devinivy", "DavidTPate", "AdriVanHoudt"],
-    "skip": ["10", "osx", "aix"]
+    "skip": ["darwin", "aix", "debian"]
   },
   "@hapi/shot": {
     "maintainers": "cjihrig",
@@ -88,7 +88,7 @@
     "skip": "win32"
   },
   "cheerio": {
-    "skip": "win32",
+    "skip": ["aix", "win32"],
     "head": true,
     "maintainers": ["matthewmueller", "jugglinmike"]
   },
@@ -104,7 +104,8 @@
   },
   "commander": {
     "prefix": "v",
-    "maintainers": ["shadowspawn", "abetomo"]
+    "maintainers": ["shadowspawn", "abetomo"],
+    "skip": ["aix"]
   },
   "crc32-stream": {
     "maintainers": "ctalkington",
@@ -122,7 +123,7 @@
   },
   "debug": {
     "maintainers": ["qix", "tootallnate"],
-    "skip": ["aix", "ppc", "s390", "win32"],
+    "skip": [true, "aix", "ppc", "s390", "win32"],
     "scripts": ["test:node", "lint"]
   },
   "dicer": {
@@ -161,7 +162,7 @@
   "esprima": {
     "maintainers": "ariya",
     "expectFail": "fips",
-    "skip": "win32"
+    "skip": ["win32"]
   },
   "express": {
     "flaky": "ppc",
@@ -206,7 +207,8 @@
     "prefix": "v",
     "flaky": ["win32"],
     "expectFail": "fips",
-    "maintainers": "isaacs"
+    "maintainers": "isaacs",
+    "skip": true
   },
   "got": {
     "maintainers": ["sindresorhus"],
@@ -253,9 +255,9 @@
     "prefix": "v",
     "maintainers": ["cpojer", "scotthovestadt", "SimenB", "thymikee", "jeysal"],
     "yarn": true,
-    "scripts": ["build:js", "test-ci-partial"],
+    "scripts": ["remove-examples", "build:js", "test-ci-partial"],
     "envVar": { "CI": true },
-    "skip": ["aix", "s390x", "ppc", "10.x", "darwin", "win32"],
+    "skip": ["aix", "s390x", "ppc", "darwin", "win32"],
     "timeout": 1800000
   },
   "jquery": {
@@ -329,7 +331,8 @@
     "maintainers": ["nodejs/addon-api"],
     "prefix": "v",
     "scripts": ["rebuild-tests", "test"],
-    "tags": "native"
+    "tags": "native",
+    "head": true
   },
   "node-gyp": {
     "envVar": { "FAST_TEST": "true" },
@@ -342,7 +345,7 @@
     "prefix": "v",
     "tags": "native",
     "maintainers": ["richardlau"],
-    "skip": [">=15"]
+    "skip": [">=16"]
   },
   "node-sass": {
     "prefix": "v",
@@ -354,7 +357,7 @@
   "npm": {
     "maintainers": ["nodejs/npm"],
     "prefix": "v",
-    "skip": "s390"
+    "skip": ["aix", "s390"]
   },
   "path-to-regexp": {
     "prefix": "v",
@@ -364,6 +367,10 @@
   "pino": {
     "prefix": "v",
     "maintainers": "mcollina"
+  },
+  "prom-client": {
+    "prefix": "v",
+    "maintainers": ["siimon", "zbjornson", "SimenB"]
   },
   "pug": {
     "prefix": "pug@",
@@ -464,12 +471,12 @@
   "spdy": {
     "prefix": "v",
     "flaky": ["aix", "sles"],
-    "skip": ">=10",
+    "skip": ">=12",
     "maintainers": "diasdavid"
   },
   "spdy-transport": {
     "prefix": "v",
-    "skip": ">=10",
+    "skip": ">=12",
     "flaky": "aix",
     "maintainers": "diasdavid"
   },
@@ -497,7 +504,8 @@
   "thread-sleep": {
     "install": ["install", "--build-from-source"],
     "tags": "native",
-    "maintainers": ["forbeslindesay", "timothygu"]
+    "maintainers": ["forbeslindesay", "timothygu"],
+    "flaky": true
   },
   "through2": {
     "maintainers": "rvagg",
@@ -560,7 +568,7 @@
   },
   "weak": {
     "tags": "native",
-    "skip": [">=10"],
+    "skip": [">=12"],
     "maintainers": "tootallnate"
   },
   "winston": {
@@ -575,14 +583,14 @@
     "prefix": "v",
     "flaky": "ppc",
     "expectFail": "fips",
-    "maintainers": ["bcoe", "addaleax"]
+    "maintainers": ["bcoe", "addaleax"],
+    "head": true
   },
   "yeoman-generator": {
     "prefix": "v",
     "flaky": ["ppc", "rhel"],
     "expectFail": "fips",
-    "maintainers": ["SBoudrias", "sindresorhus"],
-    "skip": "10.x"
+    "maintainers": ["SBoudrias", "sindresorhus"]
   },
   "zeromq": {
     "prefix": "v",

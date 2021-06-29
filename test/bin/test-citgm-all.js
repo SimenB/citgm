@@ -1,9 +1,14 @@
-'use strict';
+import { fileURLToPath } from 'url';
 
-const test = require('tap').test;
-const spawn = require('../../lib/spawn');
+import tap from 'tap';
 
-const citgmAllPath = require.resolve('../../bin/citgm-all.js');
+import { spawn } from '../../lib/spawn.js';
+
+const citgmAllPath = fileURLToPath(
+  new URL('../../bin/citgm-all.js', import.meta.url)
+);
+
+const { test } = tap;
 
 const isWin32 = process.platform === 'win32';
 const nullDevice = isWin32 ? '\\\\.\\NUL' : '/dev/null';
@@ -22,7 +27,7 @@ test('citgm-all: /w markdown /w -j', (t) => {
     t.fail('we should not get an error testing omg-i-pass');
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should run all the tests in the lookup');
+    t.equal(code, 0, 'citgm-all should run all the tests in the lookup');
   });
 });
 
@@ -36,11 +41,7 @@ test('citgm-all: /w missing lookup.json', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(
-      code,
-      1,
-      'citgm-all should fail if the lookup.json does not exist'
-    );
+    t.equal(code, 1, 'citgm-all should fail if the lookup.json does not exist');
   });
 });
 
@@ -54,7 +55,7 @@ test('citgm-all: /w bad lookup.json', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(
+    t.equal(
       code,
       1,
       'citgm-all should fail if the lookup.json contains errors'
@@ -74,7 +75,7 @@ test('citgm-all: fail /w tap /w junit', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 1, 'citgm-all should have failed');
+    t.equal(code, 1, 'citgm-all should have failed');
   });
 });
 
@@ -88,7 +89,7 @@ test('citgm-all: flaky-fail', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should exit with signal 0');
+    t.equal(code, 0, 'citgm-all should exit with signal 0');
   });
 });
 
@@ -102,7 +103,7 @@ test('citgm-all: fail expectFail', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should exit with signal 0');
+    t.equal(code, 0, 'citgm-all should exit with signal 0');
   });
 });
 
@@ -116,7 +117,7 @@ test('citgm-all: pass expectFail', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 1, 'citgm-all should exit with signal 1');
+    t.equal(code, 1, 'citgm-all should exit with signal 1');
   });
 });
 
@@ -130,7 +131,7 @@ test('citgm-all: test with replace', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should exit with signal 0');
+    t.equal(code, 0, 'citgm-all should exit with signal 0');
   });
 });
 
@@ -145,7 +146,7 @@ test('citgm-all: flaky-fail ignoring flakyness', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 1, 'citgm-all should exit with signal 1');
+    t.equal(code, 1, 'citgm-all should exit with signal 1');
   });
 });
 
@@ -161,7 +162,7 @@ test('citgm-all: includeTags', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should only run omg-i-pass');
+    t.equal(code, 0, 'citgm-all should only run omg-i-pass');
   });
 });
 
@@ -177,7 +178,7 @@ test('citgm-all: excludeTags', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should not run omg-i-fail');
+    t.equal(code, 0, 'citgm-all should not run omg-i-fail');
   });
 });
 
@@ -193,7 +194,7 @@ test('citgm-all: includeTags multiple', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should only run omg-i-pass');
+    t.equal(code, 0, 'citgm-all should only run omg-i-pass');
   });
 });
 
@@ -209,7 +210,7 @@ test('citgm-all: excludeTags modulename', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should not run omg-i-fail');
+    t.equal(code, 0, 'citgm-all should not run omg-i-fail');
   });
 });
 
@@ -225,7 +226,7 @@ test('citgm-all: includeTags modulename multiple', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should only run omg-i-pass');
+    t.equal(code, 0, 'citgm-all should only run omg-i-pass');
   });
 });
 
@@ -245,7 +246,7 @@ test('citgm-all: skip /w rootcheck /w tap to fs /w junit to fs /w append', (t) =
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'it should run omg-i-pass and skip omg-i-fail');
+    t.equal(code, 0, 'it should run omg-i-pass and skip omg-i-fail');
   });
 });
 
@@ -260,7 +261,7 @@ test('citgm-all: install with yarn', (t) => {
     t.error(err);
   });
   proc.on('close', (code) => {
-    t.equals(code, 0, 'citgm-all should only run omg-i-pass');
+    t.equal(code, 0, 'citgm-all should only run omg-i-pass');
   });
 });
 
